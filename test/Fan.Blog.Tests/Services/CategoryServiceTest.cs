@@ -47,6 +47,32 @@ namespace Fan.Blog.Tests.Services
         }
 
         [Fact]
+        public async void TestGetAsync_ShouldReturnFanException_GivenNegativeID()
+        {
+            int id = -1;
+            await Assert.ThrowsAsync<FanException>(() => categoryService.GetAsync(id));
+        }
+
+        [Fact]
+        public async void TestGetAsync_ShouldReturnFanException_WhenCategoryDoesNotExist()
+        {
+            int id = 10;
+            await Assert.ThrowsAsync<FanException>(() => categoryService.GetAsync(id));
+        }
+
+        [Fact]
+        public async void TestGetAsync_ShouldReturnCategory_GivenValidID()
+        {
+            int id = 1;
+            Category expected = new Category() { Id = 1, Title = "Web Development", Slug = "web-development" };
+
+            //Assert.Equal(expected.Id, given.Id);
+            //Assert.Equal(expected.Title, given.Title);
+            //Assert.Equal(expected.Slug, given.Slug);
+            //await Assert.Equal(expected.Id, ())
+        }
+
+        [Fact]
         public async void TestCreateAsync_ShouldReturnException_GivenNull()
         {
             string title = null;
@@ -74,21 +100,6 @@ namespace Fan.Blog.Tests.Services
         }
 
         [Fact]
-        public async void Update_category_calls_repo_and_invalidates_cache_for_all_categories()
-        {
-            // Arrange
-            var cat = await categoryService.GetAsync(1);
-
-            // Act
-            cat.Title = "Cat1";
-            await categoryService.UpdateAsync(cat);
-
-            // Assert
-            catRepoMock.Verify(repo => repo.UpdateAsync(It.IsAny<Category>()), Times.Exactly(1));
-            Assert.Null(await cache.GetAsync(BlogCache.KEY_ALL_CATS));
-        }
-
-        [Fact]
         public async void TestUpdateAsync_ShouldReturnFanException_WhenGivenNull()
         {
             await Assert.ThrowsAsync<FanException>(() => categoryService.UpdateAsync(null));
@@ -107,7 +118,7 @@ namespace Fan.Blog.Tests.Services
         }
 
         [Fact]
-        public async void Update_category_with_title_changed_only_in_casing_is_OK()
+        public async void TestUpdateAsync_ShouldBeEqual_GivenValidId()
         {
             var cat = await categoryService.GetAsync(1);
 

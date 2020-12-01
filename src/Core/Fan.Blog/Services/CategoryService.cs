@@ -66,6 +66,9 @@ namespace Fan.Blog.Services
         /// <returns></returns>
         public async Task<Category> GetAsync(int id)
         {
+            if (id < 0)
+                throw new FanException(EExceptionType.ValidationError, "Wrong ID");
+
             var cats = await GetAllAsync();
             var cat = cats.SingleOrDefault(c => c.Id == id);
             if (cat == null)

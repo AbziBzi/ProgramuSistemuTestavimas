@@ -61,26 +61,44 @@ namespace Fan.Blog.Tests.Services
         }
 
         [Fact]
-        public async void TestGetAsync_ShouldReturnCategory_GivenValidID()
+        public void TestGetAsync_ShouldReturnCategory_GivenValidID()
         {
-            int id = 1;
             Category expected = new Category() { Id = 1, Title = "Web Development", Slug = "web-development" };
+            var given = categoryService.GetAsync(1).Result;
 
-            //Assert.Equal(expected.Id, given.Id);
-            //Assert.Equal(expected.Title, given.Title);
-            //Assert.Equal(expected.Slug, given.Slug);
-            //await Assert.Equal(expected.Id, ())
+            Assert.Equal(expected.Id, given.Id);
+            Assert.Equal(expected.Title, given.Title);
+            Assert.Equal(expected.Slug, given.Slug);
         }
 
         [Fact]
-        public async void TestCreateAsync_ShouldReturnException_GivenNull()
+        public async void TestGetAsync_ShouldReturnFanException_GivenNull()
+        {
+            await Assert.ThrowsAsync<FanException>(() => categoryService.GetAsync(null));
+        }
+
+        [Fact]
+        public async void TestGetAsync_ShouldReturnFanException_GivenEmptyString()
+        {
+            await Assert.ThrowsAsync<FanException>(() => categoryService.GetAsync(""));
+        }
+
+        [Fact]
+        public async void TestGetAsync_ShouldReturnFanException_GivenNotExistedSlug()
+        {
+            string title = null;
+            await Assert.ThrowsAsync<FanException>(() => categoryService.GetAsync("some slug"));
+        }
+
+        [Fact]
+        public async void TestCreateAsync_ShouldReturnFanException_GivenNull()
         {
             string title = null;
             await Assert.ThrowsAsync<FanException>(() => categoryService.CreateAsync(title));
         }
 
         [Fact]
-        public async void TestCreateAsync_ShouldReturnException_GivenEmptyTitle()
+        public async void TestCreateAsync_ShouldReturnFanException_GivenEmptyTitle()
         {
             string title = "";
             await Assert.ThrowsAsync<FanException>(() => categoryService.CreateAsync(title));
